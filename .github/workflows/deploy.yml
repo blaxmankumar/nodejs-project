@@ -19,8 +19,8 @@ jobs:
 
     - name: Build and Push Image
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/node-cicd-app .
-        docker push ${{ secrets.DOCKER_USERNAME }}/node-cicd-app
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/node-app .
+        docker push ${{ secrets.DOCKER_USERNAME }}/node-app
 
     - name: Deploy to EC2
       uses: appleboy/ssh-action@v0.1.7
@@ -29,8 +29,8 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_KEY }}
         script: |
-          docker pull ${{ secrets.DOCKER_USERNAME }}/node-cicd-app
+          docker pull ${{ secrets.DOCKER_USERNAME }}/node-app
           docker stop app || true
           docker rm app || true
-          docker run -d -p 3000:3000 --name app ${{ secrets.DOCKER_USERNAME }}/node-cicd-app
+          docker run -d -p 3000:3000 --name app ${{ secrets.DOCKER_USERNAME }}/node-app
 
