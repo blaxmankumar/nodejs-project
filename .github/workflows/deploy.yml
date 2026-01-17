@@ -27,8 +27,7 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: Build and Push Image
-        run: |
-          docker build build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/node-app --push .
+        run: docker buildx build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/node-app --push .
 
 
       - name: Deploy to EC2
