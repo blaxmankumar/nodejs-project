@@ -30,7 +30,10 @@ jobs:
           context: .
           push: true
           tags: battulalaxmankumar04/node-app:latest
-
+      - name: Debug image name
+        run: |
+          echo "Image: ${{ secrets.DOCKER_USERNAME }}/node-app:latest"
+        
       - name: Test SSH
         uses: appleboy/ssh-action@v1.0.0
         with:
