@@ -12,23 +12,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Debug secrets
-        run: |
-          if [ -z "${{ secrets.DOCKER_USERNAME }}" ]; then echo "USERNAME EMPTY"; else echo "USERNAME OK"; fi
-          if [ -z "${{ secrets.DOCKER_PASSWORD }}" ]; then echo "PASSWORD EMPTY"; else echo "PASSWORD OK"; fi
-
       - name: Docker Login
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
       - name: Build and Push Image
-        run: docker buildx build --platform linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/node-app --push .
-
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/node-app:latest
+          platforms: linux/amd64
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v0.1.7
@@ -37,7 +33,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/node-app
+            docker pull ${{ secrets.DOCKER_USERNAME }}/node-app:latest
             docker stop app || true
             docker rm app || true
-            docker run -d -p 3000:3000 --name app ${{ secrets.DOCKER_USERNAME }}/node-app
+            docker run -d -p 3000:3000 --name app ${{ secrets.DOCKER_USERNAME }}/node-app:latest
