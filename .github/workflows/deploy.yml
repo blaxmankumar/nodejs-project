@@ -31,13 +31,16 @@ jobs:
           push: true
           tags: battulalaxmankumar04/node-app:latest
 
-      - name: Deploy to EC2
+      - name: Test SSH
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
+            whoami
+            hostname
+
             docker pull ${{ secrets.DOCKER_USERNAME }}/node-app:latest
             docker stop app || true
             docker rm app || true
